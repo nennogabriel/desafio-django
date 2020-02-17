@@ -1,0 +1,9 @@
+{% if mesas %}
+<ul>
+  {% for mesa in mesas %}
+  <li><a href="/mesa/{{ mesa.id }}/">{{ mesa }}</a></li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Nenhuma mesa registrada.</p>
+{% endif %}

@@ -20,6 +20,12 @@ class Mesa(models.Model):
     referencia = models.CharField(max_length=200)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     fechado = models.BooleanField(default=False)
+    def total_pedido(self):
+        pedidos = Pedido.objects.filter(mesa=self.id)
+        return sum([pedido.produto.valor * pedido.quantidade for pedido in pedidos])
+    def total_pagamento(self):
+        pagamentos = Pagamento.objects.filter(mesa=self.id)
+        return sum([pagamento.valor for pagamento in pagamentos])
     def status(self):
         return self.fechado and "fechado" or "aberto"
     def __str__(self):
@@ -29,7 +35,7 @@ class Produto(models.Model):
     nome = models.CharField(max_length=200)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     def __str__(self):
-        return "%s :  $%s" % (self.nome, self.valor)
+        return "%s :  $ %s" % (self.nome, self.valor)
 
 class Pedido(models.Model):
     mesa = models.ForeignKey(Mesa, on_delete=models.CASCADE)
@@ -44,4 +50,4 @@ class Pagamento(models.Model):
     meio_de_pagamento = models.ForeignKey(MeioDePagamento, on_delete=models.CASCADE)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     def __str__(self):
-        return "pago %s com %s para %s por %s" % (self.valor, self.meio_de_pagamento, self.mesa, self.nome)
+        return "pago $ %s com %s para %s por %s" % (self.valor, self.meio_de_pagamento, self.mesa, self.nome)
